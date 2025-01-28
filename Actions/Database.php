@@ -10,7 +10,7 @@ try {
 
     // $query = $connexion->prepare("SELECT * FROM `user`"); 
 
-    echo 'connecter';
+    // echo 'connecter';
 
 } catch (PDOException $e) {
     echo 'Echec : ' . $e->getMessage();
