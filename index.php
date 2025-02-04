@@ -1,12 +1,19 @@
- <?php
+<?php
+$action = $_GET['action'] ?? 'login';
 
- require ('Actions/securityAction.php'); ?>
-
- <!DOCTYPE html>
- <html lang="en">
-    <?php include 'head.php'; ?>
- <body>
- <?php include './includes/navbar.php' ?>
-    
- </body>
- </html>
+switch($action) {
+    case 'login':
+        require 'controllers/LoginController.php';
+        $controller = new LoginController();
+        $controller->login();
+        break;
+    case 'signup':
+        require '../controllers/SignupController';
+        $controller = new SignupController();
+        $controller->signup();
+        break;
+    default:
+        header('Location: ?action=login');
+        exit;
+}
+?>
