@@ -4,7 +4,9 @@ class Database {
     private $db;
 
     private function __construct() {
-        
+        // Connexion à la base de données
+        $this->db = new PDO('mysql:host=localhost;dbname=Afrika', 'phpmyadmin', 'Mouslime74');
+        $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
     public static function getInstance() {

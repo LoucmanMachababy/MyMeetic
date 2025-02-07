@@ -1,14 +1,14 @@
 <?php require_once '../controllers/SignupController.php'; ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <?php include 'includes/head.php'; ?>
+
 <body>
 
     <form class="container" method="POST">
-
         <?php
-        if (isset($errormsg)) {
-            echo '<p>' . $errormsg . '</p>';
+        if (isset($errormsg) && !empty($errormsg)) {
+            echo '<p>' . htmlspecialchars($errormsg) . '</p>';
         }
         ?>
 

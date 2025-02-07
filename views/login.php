@@ -1,12 +1,29 @@
 <?php
-require_once '../controllers/LoginController.php';
-?>
-<!DOCTYPE html>
-<html lang="en">
-<?php include 'includes/head.php'; ?>
+session_start();
+$errormsg = $_SESSION['errormsg'] ?? '';
+unset($_SESSION['errormsg']);
 
-<form method="POST">
-<?php if (isset($errormsg)) echo '<p>' . $errormsg . '</p>'; ?>
+require_once __DIR__ . '/../controllers/LoginController.php';
+$loginController = new LoginController();
+$loginController->login();
+?>
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion</title>
+</head>
+
+<body>
+    <form method="POST">
+        <?php
+        if (!empty($errormsg)) {
+            echo '<p class="error-message">' . htmlspecialchars($errormsg) . '</p>';
+        }
+        ?>
 
         <section>
             <div class="mail-section">
@@ -21,10 +38,11 @@ require_once '../controllers/LoginController.php';
             </div>
 
             <button type="submit" class="btn btn-primary" name="validate">Se connecter</button>
-            <a href="signup.php"><p>Je n'ai pas de compte, je m'inscris !</p></a>
+            <a href="signup.php">
+                <p>Je n'ai pas de compte, je m'inscris !</p>
+            </a>
         </section>
-
     </form>
-
 </body>
+
 </html>
