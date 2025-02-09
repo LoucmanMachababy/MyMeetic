@@ -1,68 +1,78 @@
-<?php require_once '../controllers/SignupController.php'; ?>
+<?php
+session_start();
+require_once __DIR__ . '/../models/Database.php';
+require_once __DIR__ . '/../models/User.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    //Récupérer les valeurs du form
+    $firstname = $_POST['firstname'] ?? '';
+    $lastname = $_POST['lastname'] ?? '';
+    $mail = $_POST['mail'] ?? '';
+    $password = $_POST['password'] ?? '';
+    $gender = $_POST['gender'] ?? '';
+    $city = $_POST['city'] ?? '';
+    $hobbies = $_POST['hobbies'] ?? '';
+    $birthday = $_POST['birthday'] ?? '';
+
+    if (empty($firstname) || empty($lastname) || empty($mail) || empty($password) || empty($gender) || empty($city) || empty($hobbies) || empty($birthday)) {
+        echo "Tous les champs sont requis.";
+        exit();
+    }
+
+    $userModel = new User(Database::getInstance());
+    $result = $userModel->register($firstname, $lastname, $mail, $password, $gender, $city, $hobbies, $birthday);
+
+    if ($result === true) {
+        header('Location: login.php');
+        exit();
+    } else {
+        echo "Erreur : " . $result;
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
-<?php include 'includes/head.php'; ?>
-
+<head>
+    <?php include __DIR__ . '/../includes/head.php'; ?>
+    <link rel="stylesheet" href="../styles/signup.css">
+</head>
 <body>
 
-    <form class="container" method="POST">
-        <?php
-        if (isset($errormsg) && !empty($errormsg)) {
-            echo '<p>' . htmlspecialchars($errormsg) . '</p>';
-        }
-        ?>
+    <form action="signup.php" method="POST">
+        <label for="firstname">Prénom</label>
+        <input type="text" name="firstname" required><br>
 
-        <section>
-            <div class="mail-section">
-                <h1>Inscription</h1>
-                <label for="InputMail" class="form-label">E-mail :</label>
-                <input type="email" class="form-control" id="EmailInput" name="mail" required>
-            </div>
+        <label for="lastname">Nom</label>
+        <input type="text" name="lastname" required><br>
 
-            <div class="firstname-section">
-                <label for="Firstname" class="form-label">Prénom :</label>
-                <input type="text" class="form-control" name="firstname" required>
-            </div>
+        <label for="mail">E-mail</label>
+        <input type="email" name="mail" required><br>
 
-            <div class="lastname-section">
-                <label for="Lastname" class="form-label">Nom :</label>
-                <input type="text" class="form-control" name="lastname" required>
-            </div>
+        <label for="password">Mot de passe</label>
+        <input type="password" name="password" required><br>
 
-            <div class="genre-section">
-                <label for="SelectGender" class="form-label">Genre :</label>
-                <select class="form-select" name="gender" required>
-                    <option value="Homme">Homme</option>
-                    <option value="Femme">Femme</option>
-                </select>
-            </div>
+        <label for="gender">Genre</label>
+        <select name="gender">
+            <option value="male">Homme</option>
+            <option value="female">Femme</option>
+            <option value="other">Autre</option>
+        </select><br>
 
-            <div class="hobbies-section">
-                <label for="hobbies" class="form-label">Hobbies :</label>
-                <input type="text" class="form-control" name="hobbies">
-            </div>
+        <label for="city">Ville</label>
+        <input type="text" name="city" required><br>
 
-            <div class="city-section">
-                <label for="text" class="form-label">Ville :</label>
-                <input type="text" class="form-control" name="city" required>
-            </div>
+        <label for="hobbies">Loisirs</label>
+        <input type="text" name="hobbies" required><br>
 
-            <div class="birthday-section">
-                <label for="date" class="form-label">Date de naissance : </label>
-                <input type="date" class="form-control" name="birthday" required>
-            </div>
+        <label for="birthday">Date de naissance</label>
+        <input type="date" name="birthday" required><br>
 
-            <div class="password-section">
-                <label for="Password" class="form-label">Mot de passe :</label>
-                <input type="password" class="form-control" name="password" required>
-            </div>
-
-            <button type="submit" class="btn btn-primary" name="validate">S'inscrire</button>
-            <a href="login.php"><p>J'ai déjà un compte, je me connecte !</p></a>
-        </section>
-
+        <button type="submit">S'inscrire</button>
+        <div>
+            <p>Déjà inscrit ? <a href="login.php">Connecte-toi ici !</a></p>
+        </div>
     </form>
 
 </body>
-
 </html>

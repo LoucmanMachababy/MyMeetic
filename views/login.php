@@ -1,48 +1,58 @@
 <?php
 session_start();
-$errormsg = $_SESSION['errormsg'] ?? '';
-unset($_SESSION['errormsg']);
 
-require_once __DIR__ . '/../controllers/LoginController.php';
-$loginController = new LoginController();
-$loginController->login();
+require_once __DIR__ . '/../models/Database.php';
+require_once __DIR__ . '/../models/User.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mail'], $_POST['password'])) {
+    $userModel = new User(Database::getInstance());
+
+    //je recup le mail et mdp de l'user
+    $user = $userModel->login($_POST['mail'], $_POST['password']);
+
+    if ($user) {
+        $_SESSION['auth'] = true;
+        $_SESSION['id'] = $user['id'];
+        $_SESSION['firstname'] = $user['firstname'];
+        header('Location: index.php');
+        exit();
+    } else {
+        $_SESSION['errormsg'] = 'Email ou mdp incorrect.';
+    }
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion</title>
-</head>
+<?php include __DIR__ . '/../includes/head.php'; ?>
+<link rel="stylesheet" href="../styles/login.css">
+
 
 <body>
-    <form method="POST">
-        <?php
-        if (!empty($errormsg)) {
-            echo '<p class="error-message">' . htmlspecialchars($errormsg) . '</p>';
-        }
-        ?>
+    <div class="container">
+        <h1>Connexion</h1>
 
-        <section>
-            <div class="mail-section">
-                <h1>Connexion</h1>
-                <label for="InputMail" class="form-label">E-mail :</label>
-                <input type="email" class="form-control" id="EmailInput" name="mail" required>
+        <?php if (isset($_SESSION['errormsg'])): ?>
+            <p class="error"><?= htmlspecialchars($_SESSION['errormsg']); unset($_SESSION['errormsg']); ?></p>
+        <?php endif; ?>
+
+        <form action="login.php" method="POST">
+            <div>
+                <label for="mail">Email</label>
+                <input type="email" name="mail" id="mail" required>
             </div>
-
-            <div class="password-section">
-                <label for="Password" class="form-label">Mot de passe :</label>
-                <input type="password" class="form-control" name="password" required>
+            <div>
+                <label for="password">Mot de passe</label>
+                <input type="password" name="password" id="password" required>
             </div>
+            <div>
+                <button type="submit">Se connecter</button>
+                <p>Pas de compte Afrika ? <a href="signup.php">Inscris-toi ici !</a></p>
+            </div>
+        </form>
+    </div>
 
-            <button type="submit" class="btn btn-primary" name="validate">Se connecter</button>
-            <a href="signup.php">
-                <p>Je n'ai pas de compte, je m'inscris !</p>
-            </a>
-        </section>
-    </form>
 </body>
 
 </html>

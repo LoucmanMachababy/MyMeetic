@@ -1,27 +1,27 @@
 <?php
 require_once __DIR__ . '/../models/User.php';
-require_once __DIR__ . '/../models/Database.php';
 
-class SignupController
-{
-    public function signup()
-    {
-        session_start();
+class SignupController {
+    public function signup() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         $errormsg = '';
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (
-                !empty($_POST['mail']) &&
-                !empty($_POST['firstname']) &&
                 !empty($_POST['lastname']) &&
-                !empty($_POST['password']) &&
-                !empty($_POST['gender']) &&
+                !empty($_POST['firstname']) && 
+                !empty($_POST['mail']) && 
+                !empty($_POST['password']) && 
+                !empty($_POST['gender']) && 
                 !empty($_POST['city']) &&
                 !empty($_POST['birthday'])
             ) {
-                $mail = htmlspecialchars($_POST['mail']);
-                $firstname = htmlspecialchars($_POST['firstname']);
                 $lastname = htmlspecialchars($_POST['lastname']);
+                $firstname = htmlspecialchars($_POST['firstname']);
+                $mail = htmlspecialchars($_POST['mail']);
                 $password = $_POST['password'];
                 $gender = htmlspecialchars($_POST['gender']);
                 $city = htmlspecialchars($_POST['city']);
@@ -32,7 +32,7 @@ class SignupController
                 $result = $userModel->register($mail, $firstname, $lastname, $password, $gender, $city, $hobbies, $birthday);
 
                 if ($result === true) {
-                    header('Location: /.php'); // Redirection vers la page d'accueil après inscription
+                    header('Location: ../index.php');
                     exit;
                 } else {
                     $errormsg = $result;
@@ -45,3 +45,4 @@ class SignupController
         require_once __DIR__ . '/../views/signup.php';
     }
 }
+?>
